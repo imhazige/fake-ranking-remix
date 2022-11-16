@@ -36,25 +36,45 @@ const players = [
 let rankingPrevious = null;
 
 export const fakeRanking = () => {
-const realPlayerIndex = _.random(0,players.length, false);  
+  const realPlayerIndex = _.random(0, players.length, false);
+  const previousRankingTemp = rankingPrevious;
   rankingPrevious = makeRanking({
     players,
     rankingPrevious,
-    realPlayerIndex
+    realPlayerIndex,
   });
 
-  return rankingPrevious;
+  const rankedPalyers = [];
+
+  for (let i = 0; i < players.length; i++) {
+    const { playerId } = rankingPrevious.find(({ index }) => index === i);
+    const player = players.find(({ _id }) => _id === playerId);
+    const newData = { ...player };
+    if (previousRankingTemp) {
+        const { index } = previousRankingTemp.find(({ playerId : playerIdTmp }) => playerId === playerIdTmp);
+        newData.change = i - index;
+        console.log('ssss', playerId,i - index);
+    }
+    rankedPalyers.push(newData);
+  }
+
+  return rankedPalyers;
 };
 
 /**
- * 
- * @param players - object with field _id and fake(if true it can be randomly ranking) 
+ *
+ * @param players - object with field _id and fake(if true it can be randomly ranking)
  * @param rankingPrevious previous ranking result
  * @param realPlayerIndex the realplayer's target ranking index after fake ranking
- * @param maxChange the random change of the ranking will be within this value 
- * @returns array of {playerId, index} 
+ * @param maxChange the random change of the ranking will be within this value
+ * @returns array of {playerId, index}
  */
-export const makeRanking = ({ players, rankingPrevious, realPlayerIndex, maxChange = 2 }) => {
+export const makeRanking = ({
+  players,
+  rankingPrevious,
+  realPlayerIndex,
+  maxChange = 2,
+}) => {
   const ids = [];
   let realPlayer = null;
   players.map((p) => {

@@ -1,17 +1,21 @@
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Form, Link, NavLink, Outlet, useLoaderData } from "@remix-run/react";
-
+import _ from "lodash";
 import { requireUserId } from "~/session.server";
 import { useUser } from "~/utils";
 import { getNoteListItems } from "~/models/note.server";
+import { fakeRanking } from "~/ranking.utils";
+
+let _players = [];
 
 export async function loader({ request }: LoaderArgs) {
-  return json({players:[]});
+  _players = fakeRanking();
+  return json({players:_players});
 }
 
 export async function action({ request }: ActionArgs) {
-  console.log('ddddd');
+  _players = fakeRanking();
   return json({});
 }
 
@@ -48,15 +52,8 @@ export default function NotesPage() {
           ) : (
             <ol>
               {data.players.map((player) => (
-                <li key={player.id}>
-                  <NavLink
-                    className={({ isActive }) =>
-                      `block border-b p-4 text-xl ${isActive ? "bg-white" : ""}`
-                    }
-                    to={player.id}
-                  >
-                    📝 {player.id}
-                  </NavLink>
+                <li key={player._id}>
+                    {player.name} {player.change}
                 </li>
               ))}
             </ol>
