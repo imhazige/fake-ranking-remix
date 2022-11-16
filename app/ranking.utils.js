@@ -33,10 +33,12 @@ const players = [
   },
 ];
 
+//can not use module-scope variables to store data
 let rankingPrevious = null;
 
 export const fakeRanking = () => {
   const realPlayerIndex = _.random(0, players.length, false);
+  //this does not work in remix
   const previousRankingTemp = rankingPrevious;
   rankingPrevious = makeRanking({
     players,
